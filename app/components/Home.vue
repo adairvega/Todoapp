@@ -25,7 +25,6 @@
         <ListView class="list-group" for="done in dones" @itemTap="onDoneTap" style="height:75%" separatorColor="transparent">
           <v-template>
             <Label id="completed-task" :text="done.name" class="list-group-item-heading" textWrap="true" />
-            <Label v-if="dones == null" text="Il n'y a pas des tâches completées" class="list-group-item-heading" textWrap="true" />
           </v-template>
         </ListView>
       </TabViewItem>
