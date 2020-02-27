@@ -21,7 +21,7 @@
         </StackLayout>
       </TabViewItem>
 
-      <TabViewItem title="Completé" textTransform="uppercase">
+      <TabViewItem title="Réalisée" textTransform="uppercase">
         <ListView class="list-group" for="done in dones" @itemTap="onDoneTap" style="height:75%" separatorColor="transparent">
           <v-template>
             <Label id="completed-task" :text="done.name" class="list-group-item-heading" textWrap="true" />
@@ -34,42 +34,50 @@
 </template>
 
 <script>
+/*import * as dialog from "ui/dialogs";
+import { CouchDB } from "nativescript-couchdb";
+
+let db = new CouchDB("https://couchdb.server/dbname", {
+  "Authorization": "Basic base64\_encoded\_string"
+});*/
+
 export default {
   methods: {
     onItemTap: function(args) {
-     action('Qu\'est ce que vous voulez faire avec cette tâche ? ', 'Cancel', ['Completé', 'Effacer']) 
+     action('Cette tâche est-elle terminée ? ', 'Annuler', ['Fait', 'Effacer']) 
       .then(result => { 
         console.log(result); // Logs the selected option for debugging.
         switch (result) {
-          case 'Completé': 
+          case 'Fait': 
             this.dones.unshift(args.item); // Places the tapped active task at the top of the completed tasks.
             this.todos.splice(args.index, 1); // Removes the tapped active  task.
             break;
           case 'Effacer':
             this.todos.splice(args.index, 1); // Removes the tapped active task.
             break; 
-          case 'Cancel' || undefined: // Dismisses the dialog
+          case 'Annuler' || undefined: // Dismisses the dialog
             break; 
         }
       })
     },
 
    onDoneTap: function(args) { 
-    action('Qu\'est ce que vous voulez faire avec cette tâche ? ', 'Cancel', ['Marquer comme non completé', 'Effacer']) 
+    action('Êtes-vous sûre d\'avoir terminée cette tâche ? ', 'Annuler', ['Marquer comme non fini', 'Effacer']) 
       .then(result => { 
         console.log(result); // Logs the selected option for debugging. 
         switch (result) { 
-          case 'Marquer comme non completé':
+          case 'Marquer comme non fini':
             this.todos.unshift(args.item); // Places the tapped completed task at the top of the to do tasks. 
             this.dones.splice(args.index,1); // Removes the tapped completed task. 
             break; 
           case 'Effacer': 
             this.dones.splice(args.index, 1); // Removes the tapped completed task. 
             break; 
-          case 'Cancel' || undefined: // Dismisses the dialog 
+          case 'Annuler' || undefined: // Dismisses the dialog 
             break; 
         } 
-      }) 
+      })
+      this.$store.commit("isDone");
     },
 
     onButtonTap() {
