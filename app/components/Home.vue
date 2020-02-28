@@ -10,7 +10,7 @@
           <GridLayout columns="2*,*" rows="*" width="100%" height="25%">
             <TextField col="0" row="0" v-model="textFieldValue" hint="Nouvelle tâche..." editable="true" @returnPress="onButtonTap" />
             <!-- Configures the text field and ensures that pressing Return on the keyboard produces the same result as tapping the button. -->
-            <Button col="1" row="0" text="Ajouter tâche" @tap="onButtonTap" />
+            <Button col="1" row="0" text="Ajouter tâche" @tap="onAddTasks" />
           </GridLayout>
 
           <ListView class="list-group" for="todo in todos" @itemTap="onItemTap" style="height:75%" separatorColor="transparent" >
@@ -34,14 +34,27 @@
 </template>
 
 <script>
-/*import * as dialog from "ui/dialogs";
-import { CouchDB } from "nativescript-couchdb";
+import { Couchbase, ConcurrencyMode } from 'nativescript-couchbase-plugin';
+const database = new Couchbase('todo-db');
 
-let db = new CouchDB("https://couchdb.server/dbname", {
-  "Authorization": "Basic base64\_encoded\_string"
-});*/
+function getTasks() {
+    let select =  database.query({
+        select: [], // Leave empty to query for all
+        order: [{ property: 'name', direction: 'asc' }]
+    });
+    return select;
+};
 
 export default {
+
+  data() {
+      return {
+        dones: [],
+        todos: [],
+        textFieldValue: "",
+      };
+    },
+
   methods: {
     onItemTap: function(args) {
      action('Cette tâche est-elle terminée ? ', 'Annuler', ['Fait', 'Effacer']) 
@@ -75,9 +88,9 @@ export default {
             break; 
           case 'Annuler' || undefined: // Dismisses the dialog 
             break; 
-        } 
-      })
-      this.$store.commit("isDone");
+        }         
+      });
+      //this.args = getTasks();
     },
 
     onButtonTap() {
@@ -88,15 +101,15 @@ export default {
       }); // Adds tasks in the ToDo array. Newly added tasks are immediately shown on the screen.
       this.textFieldValue = ""; // Clears the text field so that users can start adding new tasks immediately.
     },
-  },
 
-  data() {
-    return {
-      dones: [],
-      todos: [],
-      textFieldValue: "",
-    };
-  },
+    onAddTasks() {
+      let taskId = database.createDocument({
+        "name" : this.textFieldValue
+      });
+      this.textFieldValue = "";
+      this.todos = getTasks();
+    }
+  }
 }
 </script>
 

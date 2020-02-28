@@ -1,6 +1,6 @@
 import Vue from "nativescript-vue";
 //import * as dialog from "ui/dialogs";
-//import { CouchDB } from "nativescript-couchdb";
+import { CouchDB } from "nativescript-couchdb";
 import Home from "./components/Home";
 import store from "./store";
 
@@ -9,6 +9,7 @@ import store from "./store";
 });*/
 
 new Vue({
+    CouchDB,
     store,
     render: h => h("frame", [h(Home)])
 }).$start();
