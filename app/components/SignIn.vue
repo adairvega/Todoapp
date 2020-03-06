@@ -11,12 +11,9 @@
 </template>
 
 <script>
-import Home from './Home.vue';
-import axios from 'axios';
 
 export default {
 	components : {
-		Home
 	},
 	methods: {
 	},

@@ -44,18 +44,25 @@
 import Home from './Home.vue';
 import axios from 'axios';
 
+/*email: 'test10@mail.fr',
+JS:   password: 'tACE2y5wiH',
+JS:   uuid: 'dd288ca0-5f86-11ea-a204-a7a3efa88c7c'*/
+
 export default {
 	components : {
 		Home
 	},
 	methods: {
 		signUp() {
-			axios
+			this.$navigateTo(Home);
+			/*axios
 			.post("https://api.todolist.sherpa.one/users/signup", this.user)
 			.then((response) => {
 				console.log(response.data)
 				this.$navigateTo(Home);
-			})
+			}).catch((response) => {
+				console.log(response)
+			})*/
     	},
 	},
 	data() {
