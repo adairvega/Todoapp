@@ -62,48 +62,20 @@ JS:   uuid: 'dd288ca0-5f86-11ea-a204-a7a3efa88c7c'*/
 export default {
 	components : {
 		Home,
-<<<<<<< HEAD
-		SignIn
-	},
-	methods: {
-		signUp() {
-			this.$navigateTo(Home);
-=======
 		SignInVue
 	},
 	methods: {
 		signUp() {
 			//console.log(this.$navigateTo(SignInVue)+'clickonbutton');
->>>>>>> b931bd5d888193012626d81b91f925c7c490d594
 			axios
 			.post("https://api.todolist.sherpa.one/users/signup", this.user)
 			.then((response) => {
 				console.log(response.data)
-<<<<<<< HEAD
-				//Alert
-                    alert({
-                        title: "Mot de passe",
-                        message: "Votre mot de passe est : " + response.data.password + " gardez-le bien.",
-                        okButtonText: "Accepter"
-                    }).then(() => {
-                        console.log("The user closed the alert.");
-					});
-					
-				this.$navigateTo(Home).catch(error => console.log(error));
-			}).catch((response) => {
-				console.log(response)
-			})
-		},
-		signIn() {
-			this.$navigateTo(SignIn).catch(error => console.log(error));
-		},
-=======
 				this.$navigateTo(SignInVue);
 			}).catch((response) => {
 				console.log(response)
 			})
 		}
->>>>>>> b931bd5d888193012626d81b91f925c7c490d594
 	},
 	data() {
 		return {
