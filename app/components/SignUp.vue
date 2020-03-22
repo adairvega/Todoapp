@@ -53,6 +53,7 @@
 import Home from './Home.vue';
 import SignIn from './SignIn.vue';
 import axios from 'axios';
+import SignInVue from './SignIn.vue';
 
 /*email: 'test10@mail.fr',
 JS:   password: 'tACE2y5wiH',
@@ -61,15 +62,24 @@ JS:   uuid: 'dd288ca0-5f86-11ea-a204-a7a3efa88c7c'*/
 export default {
 	components : {
 		Home,
+<<<<<<< HEAD
 		SignIn
 	},
 	methods: {
 		signUp() {
 			this.$navigateTo(Home);
+=======
+		SignInVue
+	},
+	methods: {
+		signUp() {
+			//console.log(this.$navigateTo(SignInVue)+'clickonbutton');
+>>>>>>> b931bd5d888193012626d81b91f925c7c490d594
 			axios
 			.post("https://api.todolist.sherpa.one/users/signup", this.user)
 			.then((response) => {
 				console.log(response.data)
+<<<<<<< HEAD
 				//Alert
                     alert({
                         title: "Mot de passe",
@@ -87,6 +97,13 @@ export default {
 		signIn() {
 			this.$navigateTo(SignIn).catch(error => console.log(error));
 		},
+=======
+				this.$navigateTo(SignInVue);
+			}).catch((response) => {
+				console.log(response)
+			})
+		}
+>>>>>>> b931bd5d888193012626d81b91f925c7c490d594
 	},
 	data() {
 		return {
