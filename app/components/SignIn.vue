@@ -1,25 +1,48 @@
 <template>
-    <GridLayout row="0" rows="auto, auto, auto">
+   <Page class="page">
+      <FlexboxLayout class="page" width="100%" height="100%">
+			  <StackLayout class="form" width="100%" height="100%">
 
-        <Label class="eloha-font-semibold login-field-label m-b-2 font-size-md" row="0" text="Email"></Label>
+          <StackLayout class="input-field" marginBottom="25">
+            <TextField class="input" hint="Username" keyboardType="text" autocorrect="false" autocapitalizationType="none" v-model="user.username"
+              returnKeyType="next" @returnPress="focusPassword" fontSize="18" />
+            <StackLayout class="hr-light" />
+          </StackLayout>
 
-        <TextField row="1" class="eloha-font-semibold login-input-field font-size-md" hint="E.g. user@examples.com" keyboardType=" email" [(ngModel)]="user.email" autocorrect="false" autocapitalizationType="none" (focus)="onEmailFocus()" [ngClass]="{'input-field-error': hasEmailErrors()}"></TextField>
+          <StackLayout class="input-field" marginBottom="25">
+            <TextField class="input" hint="Password" keyboardType="password" autocorrect="false" autocapitalizationType="none" v-model="user.pwd"
+              returnKeyType="next" @returnPress="focusPassword" fontSize="18" />
+            <StackLayout class="hr-light" />
+          </StackLayout>
 
-        <Label *ngIf="hasEmailErrors()" class="eloha-font-semibold m-t-2 login-field-label color-danger font-size-md" row="2" [text]="getEmailError()"></Label>
+          <Button :text="'Sign Up'" @onTap="signIn" />
 
-    </GridLayout>
+			  </StackLayout>
+      </FlexboxLayout>
+    </Page>
 </template>
 
 <script>
-
+import axios from 'axios';
 export default {
 	components : {
 	},
 	methods: {
+    signIn() {
+			//this.$navigateTo(Home);
+			axios
+			.post("https://api.todolist.sherpa.one/users/signin", this.user)
+			.then((response) => {
+				console.log(response.data)
+				this.$navigateTo(Home);
+			}).catch((response) => {
+				console.log(response)
+			})
+		}
 	},
 	data() {
 		return {
-			user: {firstname: "", lastname: "", email: "", gender: ""}
+			user: {username: "", password: ""}
 		}
 	}
 }
