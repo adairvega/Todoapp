@@ -1,78 +1,234 @@
 <template>
-    <GridLayout row="0" rows="auto, auto, auto">
+    <Page actionBarHidden="true">
+        <FlexboxLayout class="page">
+            <StackLayout class="form">
+                <Image class="logo" src="~/assets/logo.png"></Image>
+                <Label class="header" text="Todo app"></Label>
 
-        <Label class="eloha-font-semibold login-field-label m-b-2 font-size-md" row="0" text="Email"></Label>
+                <GridLayout rows="auto, auto, auto">
+                    <StackLayout row="0" class="input-field">
+                        <TextField class="input" hint="Email" :isEnabled="!processing"
+                            keyboardType="email" autocorrect="false"
+                            autocapitalizationType="none" v-model="user.email"
+                            returnKeyType="next" @returnPress="focusPassword"></TextField>
+                        <StackLayout class="hr-light"></StackLayout>
+                    </StackLayout>
 
-        <TextField row="1" class="eloha-font-semibold login-input-field font-size-md" hint="E.g. user@examples.com" keyboardType=" email" [(ngModel)]="user.email" autocorrect="false" autocapitalizationType="none" (focus)="onEmailFocus()" [ngClass]="{'input-field-error': hasEmailErrors()}"></TextField>
+                    <StackLayout row="1" class="input-field">
+                        <TextField class="input" ref="password" :isEnabled="!processing"
+                            hint="Password" secure="true" v-model="user.password"
+                            :returnKeyType="isLoggingIn ? 'done' : 'next'"
+                            @returnPress="focusConfirmPassword"></TextField>
+                        <StackLayout class="hr-light"></StackLayout>
+                    </StackLayout>
 
-        <Label *ngIf="hasEmailErrors()" class="eloha-font-semibold m-t-2 login-field-label color-danger font-size-md" row="2" [text]="getEmailError()"></Label>
+                    <StackLayout row="2" v-show="!isLoggingIn" class="input-field">
+                        <TextField class="input" ref="confirmPassword" :isEnabled="!processing"
+                            hint="Confirm password" secure="true" v-model="user.confirmPassword"
+                            returnKeyType="done"></TextField>
+                        <StackLayout class="hr-light"></StackLayout>
+                    </StackLayout>
 
-    </GridLayout>
+                    <ActivityIndicator rowSpan="3" :busy="processing"></ActivityIndicator>
+                </GridLayout>
+
+                <Button :text="isLoggingIn ? 'Se connecter' : 'Créer compte'" :isEnabled="!processing"
+                    @tap="submit" class="btn btn-primary m-t-20"></Button>
+            </StackLayout>
+
+            <Label class="login-label sign-up-label" @tap="retournerCreationCompte">
+                <FormattedString>
+                    <Span :text="isLoggingIn ? 'Vous n\'aves pas de compte ? ' : 'Retrouner à se connecter'"></Span>
+                    <Span :text="isLoggingIn ? 'Créer compte' : ''" class="bold"></Span>
+                </FormattedString>
+            </Label>
+        </FlexboxLayout>
+    </Page>
 </template>
 
 <script>
+    import Home from "./Home.vue";
+    import SignUp from "./SignUp.vue";
 
-export default {
-	components : {
-	},
-	methods: {
-	},
-	data() {
-		return {
-			user: {firstname: "", lastname: "", email: "", gender: ""}
-		}
-	}
-}
+    export default {
+        data() {
+            return {
+                isLoggingIn: true,
+                processing: false,
+                user: {
+                    email: "",
+                    password: "",
+                    confirmPassword: ""
+                }
+            };
+        },
+        methods: {
+            retournerCreationCompte() {
+                this.$navigateTo(SignUp).catch(error => console.log(error));
+            },
+
+            submit() {
+                if (!this.user.email || !this.user.password) {
+                    this.alert(
+                        "Please provide both an email address and password."
+                    );
+                    return;
+                }
+
+                this.processing = true;
+                if (this.isLoggingIn) {
+                    this.login();
+                } else {
+                    this.register();
+                }
+            },
+
+            login() {
+                this.$backendService
+                    .login(this.user)
+                    .then(() => {
+                        this.processing = false;
+                        this.$navigateTo(Home, { clearHistory: true });
+                    })
+                    .catch(() => {
+                        this.processing = false;
+                        this.alert(
+                            "Unfortunately we could not find your account."
+                        );
+                    });
+            },
+
+            register() {
+                if (this.user.password != this.user.confirmPassword) {
+                    this.alert("Your passwords do not match.");
+                    this.processing = false;
+                    return;
+                }
+
+                this.$backendService
+                    .register(this.user)
+                    .then(() => {
+                        this.processing = false;
+                        this.alert(
+                            "Your account was successfully created.");
+                        this.isLoggingIn = true;
+                    })
+                    .catch(() => {
+                        this.processing = false;
+                        this.alert(
+                            "Unfortunately we were unable to create your account."
+                        );
+                    });
+            },
+
+            forgotPassword() {
+                prompt({
+                    title: "Forgot Password",
+                    message: "Enter the email address you used to register for APP NAME to reset your password.",
+                    inputType: "email",
+                    defaultText: "",
+                    okButtonText: "Ok",
+                    cancelButtonText: "Cancel"
+                }).then(data => {
+                    if (data.result) {
+                        this.$backendService
+                            .resetPassword(data.text.trim())
+                            .then(() => {
+                                this.alert(
+                                    "Your password was successfully reset. Please check your email for instructions on choosing a new password."
+                                );
+                            })
+                            .catch(() => {
+                                this.alert(
+                                    "Unfortunately, an error occurred resetting your password."
+                                );
+                            });
+                    }
+                });
+            },
+
+            focusPassword() {
+                this.$refs.password.nativeView.focus();
+            },
+            focusConfirmPassword() {
+                if (!this.isLoggingIn) {
+                    this.$refs.confirmPassword.nativeView.focus();
+                }
+            },
+
+            alert(message) {
+                return alert({
+                    title: "APP NAME",
+                    okButtonText: "OK",
+                    message: message
+                });
+            }
+        }
+    };
 </script>
 
 <style scoped>
-#active-task {
-  font-size: 20;
-  font-weight: bold;
-  color: #53ba82;
-  margin-left: 20;
-  padding-top: 5;
-  padding-bottom: 10;
-}
+    .page {
+        align-items: center;
+        flex-direction: column;
+    }
 
-#completed-task {
-  font-size: 20;
-  color: #d3d3d3;
-  margin-left: 20;
-  padding-top: 5;
-  padding-bottom: 10;
-  text-decoration: line-through;
-}
+    .form {
+        margin-left: 30;
+        margin-right: 30;
+        flex-grow: 2;
+        vertical-align: middle;
+    }
 
-.home-panel {
-  vertical-align: center;
-  font-size: 20;
-  margin: 15;
-}
+    .logo {
+        margin-bottom: 12;
+        height: 90;
+        font-weight: bold;
+    }
 
-.description-label {
-  margin-bottom: 15;
-}
+    .header {
+        horizontal-align: center;
+        font-size: 25;
+        font-weight: 600;
+        margin-bottom: 70;
+        text-align: center;
+        color: #35495e;
+    }
 
-TextField {
-  font-size: 20;
-  color: #53ba82;
-  margin-top: 10;
-  margin-bottom: 10;
-  margin-right: 5;
-  margin-left: 20;
-}
+    .input-field {
+        margin-bottom: 25;
+    }
 
-Button { 
-  font-size: 15; 
-  font-weight: bold; 
-  color: white; 
-  background-color: #53ba82; 
-  height: 40;
-  margin-top: 10; 
-  margin-bottom: 10; 
-  margin-right: 10; 
-  margin-left: 10; 
-  border-radius: 20px; 
-}
+    .input {
+        font-size: 18;
+        placeholder-color: #A8A8A8;
+    }
+
+    .input:disabled {
+        background-color: white;
+        opacity: 0.5;
+    }
+
+    .btn-primary {
+        margin: 30 5 15 5;
+    }
+
+    .login-label {
+        horizontal-align: center;
+        color: #A8A8A8;
+        font-size: 16;
+    }
+
+    .sign-up-label {
+        margin-bottom: 20;
+    }
+
+    .bold {
+        color: #000000;
+    }
+
+    ActionBar {
+      background-color: #35495e;
+      color: white; 
+    }
 </style>

@@ -1,5 +1,7 @@
 <template>
     <Page class="page">
+		<ActionBar title="Todo app" class="action-bar" />
+
         <FlexboxLayout class="page" width="100%" height="100%">
 			<StackLayout class="form" width="100%" height="100%">
 				
@@ -8,13 +10,13 @@
 				</StackLayout>
 
 				<StackLayout class="input-field" marginBottom="25">
-					<TextField class="input" hint="Firstname" keyboardType="text" autocorrect="false" autocapitalizationType="none" v-model="user.firstname"
+					<TextField class="input" hint="Prenom" keyboardType="text" autocorrect="false" autocapitalizationType="none" v-model="user.firstname"
 					 returnKeyType="next" @returnPress="focusPassword" fontSize="18" />
 					<StackLayout class="hr-light" />
 				</StackLayout>
 
 				<StackLayout class="input-field" marginBottom="25">
-					<TextField class="input" hint="Lastname" keyboardType="text" autocorrect="false" autocapitalizationType="none" v-model="user.lastname"
+					<TextField class="input" hint="Nom" keyboardType="text" autocorrect="false" autocapitalizationType="none" v-model="user.lastname"
 					 returnKeyType="next" @returnPress="focusPassword" fontSize="18" />
 					<StackLayout class="hr-light" />
 				</StackLayout>
@@ -26,12 +28,19 @@
 				</StackLayout>
 
 				<StackLayout class="input-field" marginBottom="25">
-					<TextField class="input" hint="Gender" keyboardType="text" autocorrect="false" autocapitalizationType="none" v-model="user.gender"
+					<TextField class="input" hint="female / male" keyboardType="text" autocorrect="false" autocapitalizationType="none" v-model="user.gender"
 					 returnKeyType="next" @returnPress="focusPassword" fontSize="18" />
 					<StackLayout class="hr-light" />
 				</StackLayout>
 
-				<Button :text="'Sign Up'" @onTap="signUp" />
+				<Button :text="'Créer compte'" @onTap="signUp" />
+				
+				<Label class="login-label sign-up-label" @tap="signIn">
+                <FormattedString>
+                    <Span :text="'Vous aves déjà de compte ? '"></Span>
+                    <Span :text="'Se connecter'" class="bold"></Span>
+                </FormattedString>
+            </Label>
 				
 			</StackLayout>
 
@@ -42,6 +51,7 @@
 
 <script>
 import Home from './Home.vue';
+import SignIn from './SignIn.vue';
 import axios from 'axios';
 
 /*email: 'test10@mail.fr',
@@ -50,20 +60,33 @@ JS:   uuid: 'dd288ca0-5f86-11ea-a204-a7a3efa88c7c'*/
 
 export default {
 	components : {
-		Home
+		Home,
+		SignIn
 	},
 	methods: {
 		signUp() {
 			this.$navigateTo(Home);
-			/*axios
+			axios
 			.post("https://api.todolist.sherpa.one/users/signup", this.user)
 			.then((response) => {
 				console.log(response.data)
-				this.$navigateTo(Home);
+				//Alert
+                    alert({
+                        title: "Mot de passe",
+                        message: "Votre mot de passe est : " + response.data.password + " gardez-le bien.",
+                        okButtonText: "Accepter"
+                    }).then(() => {
+                        console.log("The user closed the alert.");
+					});
+					
+				this.$navigateTo(Home).catch(error => console.log(error));
 			}).catch((response) => {
 				console.log(response)
-			})*/
-    	},
+			})
+		},
+		signIn() {
+			this.$navigateTo(SignIn).catch(error => console.log(error));
+		},
 	},
 	data() {
 		return {
@@ -123,4 +146,19 @@ Button {
   margin-left: 10; 
   border-radius: 20px; 
 }
+
+ActionBar {
+  background-color: #35495e;
+  color: white; 
+}
+
+.login-label {
+        horizontal-align: center;
+        color: #A8A8A8;
+        font-size: 16;
+    }
+
+    .sign-up-label {
+        margin-bottom: 20;
+    }
 </style>

@@ -14,6 +14,6 @@ new Vue({
     components: {
         Home,
         SignUp,
-        SignIn
+        SignIn,
     }
 }).$start();

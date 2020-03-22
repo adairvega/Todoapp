@@ -142,4 +142,8 @@ Button {
   margin-left: 10; 
   border-radius: 20px; 
 }
+ActionBar {
+  background-color: #35495e;
+  color: white; 
+}
 </style>
