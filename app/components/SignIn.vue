@@ -27,6 +27,7 @@ import axios from 'axios';
 import Home from './Home.vue';
 export default {
 	components : {
+        
 	},
 	methods: {
     signIn() {

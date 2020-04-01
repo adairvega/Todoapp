@@ -51,10 +51,7 @@
 
 <script>
 import axios from 'axios';
-import Home from './Home.vue';
 import SignInVue from './SignIn.vue';
-import { Couchbase } from 'nativescript-couchbase-plugin';
-const database = new Couchbase('todo-base');
 /*email: 'test10@mail.fr',
 JS:   password: 'tACE2y5wiH',
 JS:   uuid: 'dd288ca0-5f86-11ea-a204-a7a3efa88c7c'*/
@@ -64,29 +61,14 @@ email: 'jj@jj.com',
 JS:   password: 'VViF3i8US6',
 JS:   uuid: 'd76a6cb0-743b-11ea-a100-cd224cefdaf9'
 */
-
-const documentId = database.createDocument({
-    "firstname": firstname,
-    "lastname": lastname,
-    "email": email,
-    "genre": gender
-});
-
-//const person = database.getDocument(documentId);
-
 export default {
 	components : {
+		
 	},
 	methods: {
 		signUp() {
-			let documentId = database.createDocument({
-					"firstname": firstname,
-					"lastname": lastname,
-					"email": email,
-					"genre": gender
-				});
 			axios
-			.post("https://api.todolist.sherpa.one/users/signup", documentId)
+			.post("https://api.todolist.sherpa.one/users/signup", this.user)
 			.then((response) => {
 				console.log(response.data)
 				this.$navigateTo(SignInVue);

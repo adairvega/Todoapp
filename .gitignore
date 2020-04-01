@@ -34,4 +34,4 @@ typings/
 !.vscode/extensions.json
 
 # Update
-.update_backup/
+.update_backup/*
