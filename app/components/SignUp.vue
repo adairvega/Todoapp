@@ -33,11 +33,11 @@
 					<StackLayout class="hr-light" />
 				</StackLayout>
 
-				<Button :text="'Créer compte'" @onTap="signUp" />
+				<Button :text="'Créer compte'" @tap="signUp" />
 				
-				<Label class="login-label sign-up-label" @tap="signIn">
+				<Label class="login-label sign-up-label" @tap="goToSignIn">
                 <FormattedString>
-                    <Span :text="'Vous aves déjà de compte ? '"></Span>
+                    <Span :text="'Vous avez déjà un compte ? '"></Span>
                     <Span :text="'Se connecter'" class="bold"></Span>
                 </FormattedString>
             </Label>
@@ -50,31 +50,53 @@
 </template>
 
 <script>
-import Home from './Home.vue';
-import SignIn from './SignIn.vue';
 import axios from 'axios';
+import Home from './Home.vue';
 import SignInVue from './SignIn.vue';
-
+import { Couchbase } from 'nativescript-couchbase-plugin';
+const database = new Couchbase('todo-base');
 /*email: 'test10@mail.fr',
 JS:   password: 'tACE2y5wiH',
 JS:   uuid: 'dd288ca0-5f86-11ea-a204-a7a3efa88c7c'*/
 
+/* TEST CREDENTIALS
+email: 'jj@jj.com',
+JS:   password: 'VViF3i8US6',
+JS:   uuid: 'd76a6cb0-743b-11ea-a100-cd224cefdaf9'
+*/
+
+const documentId = database.createDocument({
+    "firstname": firstname,
+    "lastname": lastname,
+    "email": email,
+    "genre": gender
+});
+
+//const person = database.getDocument(documentId);
+
 export default {
 	components : {
-		Home,
-		SignInVue
 	},
 	methods: {
 		signUp() {
-			//console.log(this.$navigateTo(SignInVue)+'clickonbutton');
+			let documentId = database.createDocument({
+					"firstname": firstname,
+					"lastname": lastname,
+					"email": email,
+					"genre": gender
+				});
 			axios
-			.post("https://api.todolist.sherpa.one/users/signup", this.user)
+			.post("https://api.todolist.sherpa.one/users/signup", documentId)
 			.then((response) => {
 				console.log(response.data)
 				this.$navigateTo(SignInVue);
 			}).catch((response) => {
 				console.log(response)
 			})
+		},
+
+		goToSignIn(){
+			this.$navigateTo(SignInVue);
 		}
 	},
 	data() {

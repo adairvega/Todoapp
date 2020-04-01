@@ -10,12 +10,12 @@
           </StackLayout>
 
           <StackLayout class="input-field" marginBottom="25">
-            <TextField class="input" hint="Password" keyboardType="password" autocorrect="false" autocapitalizationType="none" v-model="user.pwd"
+            <TextField class="input" hint="Password" keyboardType="password" secure="true" autocorrect="false" autocapitalizationType="none" v-model="user.pwd"
               returnKeyType="next" @returnPress="focusPassword" fontSize="18" />
             <StackLayout class="hr-light" />
           </StackLayout>
 
-          <Button :text="'Sign Up'" @onTap="signIn" />
+          <Button :text="'Se connecter'" @tap="signIn" />
 
 			  </StackLayout>
       </FlexboxLayout>
@@ -24,12 +24,12 @@
 
 <script>
 import axios from 'axios';
+import Home from './Home.vue';
 export default {
 	components : {
 	},
 	methods: {
     signIn() {
-			//this.$navigateTo(Home);
 			axios
 			.post("https://api.todolist.sherpa.one/users/signin", this.user)
 			.then((response) => {
