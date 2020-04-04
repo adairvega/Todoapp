@@ -1,33 +1,57 @@
 <template>
-   <Page class="page">
-      <FlexboxLayout class="page" width="100%" height="100%">
-			  <StackLayout class="form" width="100%" height="100%">
+    <Page class="page">
+        <ActionBar title="Todo app" class="action-bar" />
 
-          <StackLayout class="input-field" marginBottom="25">
-            <TextField class="input" hint="Username" keyboardType="text" autocorrect="false" autocapitalizationType="none" v-model="user.username"
-              returnKeyType="next" @returnPress="focusPassword" fontSize="18" />
-            <StackLayout class="hr-light" />
-          </StackLayout>
+        <FlexboxLayout class="page" width="100%" height="100%">
+            <StackLayout class="form">
+                <Image class="logo" src="~/assets/logo.png"></Image>
+                <Label class="header" text="Se connecter"></Label>
 
-          <StackLayout class="input-field" marginBottom="25">
-            <TextField class="input" hint="Password" keyboardType="password" secure="true" autocorrect="false" autocapitalizationType="none" v-model="user.pwd"
-              returnKeyType="next" @returnPress="focusPassword" fontSize="18" />
-            <StackLayout class="hr-light" />
-          </StackLayout>
+                <GridLayout rows="auto, auto, auto">
+                    <StackLayout row="0" class="input-field">
+                        <TextField class="input" hint="Email" :isEnabled="!processing"
+                            keyboardType="email" autocorrect="false"
+                            autocapitalizationType="none" v-model="user.email"
+                            returnKeyType="next" @returnPress="focusPassword"></TextField>
+                        <StackLayout class="hr-light"></StackLayout>
+                    </StackLayout>
 
-          <Button :text="'Se connecter'" @tap="signIn" />
+                    <StackLayout row="1" class="input-field">
+                        <TextField class="input" ref="password" :isEnabled="!processing"
+                            hint="Password" secure="true" v-model="user.password"
+                            :returnKeyType="isLoggingIn ? 'done' : 'next'"
+                            @returnPress="focusConfirmPassword"></TextField>
+                        <StackLayout class="hr-light"></StackLayout>
+                    </StackLayout>
 
-			  </StackLayout>
-      </FlexboxLayout>
+                </GridLayout>
+
+                <Button :text="'Connexion'" @tap="submit" class="btn btn-primary m-t-20"></Button>
+            </StackLayout>
+
+            <Label class="login-label sign-up-label" @tap="goToSignUp">
+                <FormattedString>
+                    <Span :text="'Créer un compte'"></Span>
+                </FormattedString>
+            </Label>
+        </FlexboxLayout>
     </Page>
 </template>
 
 <script>
 import axios from 'axios';
 import Home from './Home.vue';
+import SignUpVue from './SignUp.vue';
+
 export default {
+    
+	data() {
+		return {
+			user: {username: "", password: ""}
+		}
+	},
 	components : {
-        
+        Home
 	},
 	methods: {
     signIn() {
@@ -39,13 +63,11 @@ export default {
 			}).catch((response) => {
 				console.log(response)
 			})
-		}
-	},
-	data() {
-		return {
-			user: {username: "", password: ""}
-		}
-	}
+        },
+        goToSignUp(){
+                this.$navigateTo(SignUpVue);
+        }
+    }
 }
 </script>
 
@@ -112,5 +134,10 @@ export default {
     ActionBar {
       background-color: #35495e;
       color: white; 
+    }
+    
+    Button {
+      background-color: #35495e;
+      color: white;         
     }
 </style>
