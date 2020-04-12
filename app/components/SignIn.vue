@@ -9,24 +9,21 @@
 
                 <GridLayout rows="auto, auto, auto">
                     <StackLayout row="0" class="input-field">
-                        <TextField class="input" hint="Email" :isEnabled="!processing"
+                        <TextField class="input" hint="Email"
                             keyboardType="email" autocorrect="false"
-                            autocapitalizationType="none" v-model="user.email"
-                            returnKeyType="next" @returnPress="focusPassword"></TextField>
+                            autocapitalizationType="none" v-model="email">
+                        </TextField>
                         <StackLayout class="hr-light"></StackLayout>
                     </StackLayout>
 
                     <StackLayout row="1" class="input-field">
-                        <TextField class="input" ref="password" :isEnabled="!processing"
-                            hint="Password" secure="true" v-model="user.password"
-                            :returnKeyType="isLoggingIn ? 'done' : 'next'"
-                            @returnPress="focusConfirmPassword"></TextField>
+                        <TextField class="input" ref="password"
+                            hint="Mon de passe" secure="true" v-model="password">
+                        </TextField>
                         <StackLayout class="hr-light"></StackLayout>
                     </StackLayout>
-
                 </GridLayout>
-
-                <Button :text="'Connexion'" @tap="submit" class="btn btn-primary m-t-20"></Button>
+                <Button :text="'Connexion'" @tap="signIn" class="btn btn-primary m-t-20"></Button>
             </StackLayout>
 
             <Label class="login-label sign-up-label" @tap="goToSignUp">
@@ -44,10 +41,15 @@ import Home from './Home.vue';
 import SignUpVue from './SignUp.vue';
 
 export default {
-    
+    /*
+    JS: { email: 'kiko@kiko.kiko',
+    JS:   password: 'OIp7s/jelN',
+    JS:   uuid: '70972c30-7ce2-11ea-bda4-e3af246dc956' }
+    */
 	data() {
 		return {
-			user: {username: "", password: ""}
+            email: "kiko@kiko.kiko", 
+            password: "OIp7s/jelN"
 		}
 	},
 	components : {
@@ -55,13 +57,19 @@ export default {
 	},
 	methods: {
     signIn() {
-			axios
-			.post("https://api.todolist.sherpa.one/users/signin", this.user)
+			axios.post("https://api.todolist.sherpa.one/users/signin", {}, {
+                auth: {
+                    username: this.email,
+                    password: this.password
+                }
+            })
 			.then((response) => {
+
 				console.log(response.data)
-				this.$navigateTo(Home);
+                this.$navigateTo(Home);
+                
 			}).catch((response) => {
-				console.log(response)
+				console.log(response.response)
 			})
         },
         goToSignUp(){
